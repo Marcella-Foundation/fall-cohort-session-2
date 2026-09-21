@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Atrium</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    width: 100%;
+    height: 100%;
+    background: #0d1b2a;
+    overflow: hidden;
+    font-family: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif;
+  }
+
+  .hero {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: #0d1b2a;
+  }
+
+  video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    pointer-events: none;
+    background: linear-gradient(to bottom, rgba(13,27,42,0.55), rgba(0,0,0,0.25), rgba(13,27,42,0.45));
+  }
+
+  canvas.glitch {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+    pointer-events: none;
+    opacity: 0;
+    mix-blend-mode: screen;
+  }
+
+  .scanlines {
+    position: absolute;
+    inset: 0;
+    z-index: 8;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0, 0, 0, 0.03) 2px,
+      rgba(0, 0, 0, 0.03) 4px
+    );
+  }
+
+  .vignette {
+    position: absolute;
+    inset: 0;
+    z-index: 9;
+    pointer-events: none;
+    background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.4) 100%);
+  }
+
+  .flash {
+    position: absolute;
+    inset: 0;
+    z-index: 12;
+    pointer-events: none;
+    background: #fff;
+    opacity: 0;
+  }
+
+  .tear {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 3px;
+    z-index: 11;
+    pointer-events: none;
+    opacity: 0;
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+  }
+
+  .content {
+    position: relative;
+    z-index: 20;
+    text-align: center;
+    padding: 0 1.5rem;
+    opacity: 0;
+    transition: opacity 0.6s ease;
+  }
+
+  .content.visible {
+    opacity: 1;
+  }
+
+  .logo {
+    margin-bottom: 1.5rem;
+    transition: transform 0.15s ease, opacity 0.15s ease, filter 0.15s ease;
+  }
+
+  .logo img {
+    width: clamp(210px, 32vw, 563px);
+    filter: brightness(0) invert(1);
+  }
+
+  .tag {
+    font-size: clamp(0.85rem, 1.4vw, 1rem);
+    color: rgba(250, 247, 242, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+  }
+</style>
+</head>
+<body>
+
+<div class="hero" id="hero">
+  <video id="videoA" muted playsinline preload="auto">
+    <source src="https://pub-5fec33d755fc4627aff159676fc2e4e7.r2.dev/zoom-out-web.mp4" type="video/mp4">
+  </video>
+  <video id="videoB" muted playsinline preload="auto">
+    <source src="assets/heroShot.mp4" type="video/mp4">
+  </video>
+
+  <div class="overlay"></div>
+  <canvas class="glitch" id="glitchCanvas"></canvas>
+  <div class="scanlines"></div>
+  <div class="vignette"></div>
+  <div class="flash" id="flash"></div>
+  <div class="tear" id="tear1"></div>
+  <div class="tear" id="tear2"></div>
+  <div class="tear" id="tear3"></div>
+
+  <div class="content" id="content">
+    <div class="logo" id="logo">
+      <img src="assets/atrium-logo.svg" alt="The Atrium">
+    </div>
+    <p class="tag">Opening 2027 &mdash; South Lake Tahoe</p>
+  </div>
+</div>
+
+<script>
+(function () {
+  const vA = document.getElementById('videoA');
+  const vB = document.getElementById('videoB');
+  const cvs = document.getElementById('glitchCanvas');
+  const ctx = cvs.getContext('2d');
+  const flashEl = document.getElementById('flash');
+  const tears = [document.getElementById('tear1'), document.getElementById('tear2'), document.getElementById('tear3')];
+  const content = document.getElementById('content');
+  const logo = document.getElementById('logo');
+
+  let currentVideo = 'A';
+  let glitching = false;
+  let glitchStart = 0;
+  let swapped = false;
+  const GLITCH_DURATION = 1000;
+  const END_BUFFER = 0.3;
+  const VIDEO_A_MAX_DURATION = 6;
+
+  function resizeCanvas() {
+    cvs.width = window.innerWidth;
+    cvs.height = window.innerHeight;
+  }
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
+
+  function drawStatic(intensity) {
+    const w = cvs.width, h = cvs.height;
+    const imageData = ctx.createImageData(w, h);
+    const data = imageData.data;
+    const skip = 4;
+    for (let i = 0; i < data.length; i += 4 * skip) {
+      const v = Math.random() * 255;
+      const a = Math.random() * intensity * 255;
+      for (let j = 0; j < skip && i + j * 4 < data.length; j++) {
+        data[i + j * 4] = v;
+        data[i + j * 4 + 1] = v;
+        data[i + j * 4 + 2] = v;
+        data[i + j * 4 + 3] = a;
+      }
+    }
+    ctx.putImageData(imageData, 0, 0);
+    const bandCount = Math.floor(Math.random() * 3 * intensity) + 1;
+    for (let b = 0; b < bandCount; b++) {
+      const y = Math.random() * h;
+      const bandH = Math.random() * 30 + 5;
+      ctx.fillStyle = 'rgba(255,255,255,' + (Math.random() * 0.15 * intensity) + ')';
+      ctx.fillRect(0, y, w, bandH);
+    }
+  }
+
+  function applyJitter(intensity) {
+    const active = currentVideo === 'A' ? vA : vB;
+    const shift = Math.round(intensity * 12);
+    if (shift > 0) {
+      active.style.filter = 'blur(' + (intensity * 1.5) + 'px)';
+      const jx = (Math.random() - 0.5) * shift * 2;
+      const jy = (Math.random() - 0.5) * shift * 0.5;
+      active.style.transform = 'translate(' + jx + 'px, ' + jy + 'px)';
+    } else {
+      active.style.filter = '';
+      active.style.transform = '';
+    }
+  }
+
+  function updateTears(intensity) {
+    tears.forEach((tear) => {
+      if (Math.random() < intensity * 0.8) {
+        tear.style.opacity = String(Math.random() * intensity);
+        tear.style.top = Math.random() * 100 + '%';
+        tear.style.transform = 'translateX(' + ((Math.random() - 0.5) * 30 * intensity) + 'px)';
+        tear.style.height = (Math.random() * 4 + 1) + 'px';
+      } else {
+        tear.style.opacity = '0';
+      }
+    });
+  }
+
+  function triggerFlash() {
+    flashEl.style.opacity = '0.25';
+    flashEl.style.transition = 'none';
+    requestAnimationFrame(() => {
+      flashEl.style.transition = 'opacity 0.15s ease-out';
+      flashEl.style.opacity = '0';
+    });
+  }
+
+  function glitchEnvelope(t) {
+    if (t < 0.3) return t / 0.3;
+    if (t < 0.7) return 1;
+    return 1 - ((t - 0.7) / 0.3);
+  }
+
+  function applyLogoGlitch(intensity, t) {
+    if (intensity > 0.1) {
+      const shift = Math.round(intensity * 8);
+      const jx = (Math.random() - 0.5) * shift;
+      const flicker = t > 0.4 && t < 0.6 && Math.random() < 0.3 ? 0.2 + Math.random() * 0.4 : 1;
+      content.style.transform = 'translateX(' + jx + 'px)';
+      content.style.opacity = String(flicker);
+      logo.style.filter = 'drop-shadow(' + shift + 'px 0 0 rgba(196,101,58,' + (intensity * 0.6) + ')) drop-shadow(' + (-shift) + 'px 0 0 rgba(100,180,255,' + (intensity * 0.5) + '))';
+    } else {
+      content.style.transform = '';
+      content.style.opacity = '1';
+      logo.style.filter = '';
+    }
+  }
+
+  function startGlitch() {
+    if (glitching) return;
+    glitching = true;
+    swapped = false;
+    glitchStart = performance.now();
+    cvs.style.opacity = '1';
+    requestAnimationFrame(glitchFrame);
+  }
+
+  function glitchFrame(now) {
+    if (!glitching) return;
+    const elapsed = now - glitchStart;
+    const t = Math.min(elapsed / GLITCH_DURATION, 1);
+    const intensity = glitchEnvelope(t);
+
+    drawStatic(intensity);
+    applyJitter(intensity);
+    updateTears(intensity);
+    applyLogoGlitch(intensity, t);
+
+    if (t >= 0.5 && !swapped) {
+      swapped = true;
+      if (currentVideo === 'A') {
+        vA.pause();
+        vB.currentTime = 0;
+        vB.play().catch(() => {});
+        vA.style.zIndex = '1';
+        vB.style.zIndex = '2';
+        currentVideo = 'B';
+      } else {
+        vB.pause();
+        vA.currentTime = 0;
+        vA.play().catch(() => {});
+        vA.style.zIndex = '2';
+        vB.style.zIndex = '1';
+        currentVideo = 'A';
+      }
+      triggerFlash();
+    }
+
+    if (t < 1) {
+      requestAnimationFrame(glitchFrame);
+    } else {
+      glitching = false;
+      cvs.style.opacity = '0';
+      vA.style.filter = '';
+      vA.style.transform = '';
+      vB.style.filter = '';
+      vB.style.transform = '';
+      tears.forEach((te) => (te.style.opacity = '0'));
+      applyLogoGlitch(0, 0);
+      const active = currentVideo === 'A' ? vA : vB;
+      active.currentTime = 0;
+      active.play().catch(() => {});
+    }
+  }
+
+  function onTimeUpdate(e) {
+    const vid = e.target;
+    if (glitching) return;
+    if (vid === vA && currentVideo !== 'A') return;
+    if (vid === vB && currentVideo !== 'B') return;
+    const effectiveEnd = vid === vA ? Math.min(vid.duration, VIDEO_A_MAX_DURATION) : vid.duration;
+    if (effectiveEnd && vid.currentTime >= effectiveEnd - END_BUFFER) {
+      startGlitch();
+    }
+  }
+  vA.addEventListener('timeupdate', onTimeUpdate);
+  vB.addEventListener('timeupdate', onTimeUpdate);
+
+  function ambientFlicker() {
+    if (!glitching && Math.random() < 0.015) {
+      const v = currentVideo === 'A' ? vA : vB;
+      const jx = (Math.random() - 0.5) * 3;
+      v.style.transform = 'translateX(' + jx + 'px)';
+      setTimeout(() => { v.style.transform = ''; }, 50 + Math.random() * 80);
+    }
+    requestAnimationFrame(ambientFlicker);
+  }
+
+  function boot() {
+    vA.loop = false;
+    vB.loop = false;
+    vA.style.zIndex = '2';
+    vB.style.zIndex = '1';
+    vA.currentTime = 0;
+    vA.play().catch(() => {});
+    vB.pause();
+    vB.currentTime = 0;
+    ambientFlicker();
+    content.classList.add('visible');
+  }
+
+  let booted = false;
+  function bootOnce() {
+    if (booted) return;
+    booted = true;
+    boot();
+  }
+
+  Promise.all([
+    new Promise((r) => {
+      if (vA.readyState >= 4) { r(); return; }
+      vA.addEventListener('canplaythrough', () => r(), { once: true });
+      vA.load();
+    }),
+    new Promise((r) => {
+      if (vB.readyState >= 4) { r(); return; }
+      vB.addEventListener('canplaythrough', () => r(), { once: true });
+      vB.load();
+    }),
+  ]).then(bootOnce);
+
+  setTimeout(bootOnce, 3000);
+})();
+</script>
+
+</body>
+</html>

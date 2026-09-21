@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>What is Marcella Foundation?</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -15,7 +15,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background: #1a1b2e;
+    background: #0d2438;
     font-family: 'Inter', sans-serif;
     overflow: hidden;
     position: relative;
@@ -24,10 +24,10 @@
   body::before {
     content: '';
     position: absolute;
-    width: 800px;
-    height: 800px;
+    width: 900px;
+    height: 900px;
     border-radius: 50%;
-    background: radial-gradient(circle, rgba(242, 184, 75, 0.18) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(232, 132, 74, 0.20) 0%, transparent 70%);
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
@@ -40,14 +40,16 @@
     50% { transform: translate(-50%, -50%) scale(1.15); opacity: 1; }
   }
 
-  .content {
+  .wrap {
     position: relative;
     z-index: 1;
+    width: 100%;
+    max-width: 1500px;
+    padding: 3vh 4vw;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: clamp(1.2rem, 3vw, 2rem);
-    padding: 2vh 4vw;
+    gap: clamp(1.4rem, 3vw, 2.2rem);
     animation: fadeInUp 1s ease-out;
   }
 
@@ -56,53 +58,175 @@
     to { opacity: 1; transform: translateY(0); }
   }
 
-  h1 {
-    color: #ffffff;
-    font-size: clamp(2rem, 5.5vw, 4rem);
-    font-weight: 900;
+  .logo {
+    height: clamp(48px, 6.5vw, 76px);
+    width: auto;
+  }
+
+  .tagline {
+    color: #e8844a;
+    font-size: clamp(0.75rem, 1.4vw, 0.95rem);
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
     text-align: center;
-    letter-spacing: -1px;
-    line-height: 1.15;
-    text-shadow: 0 2px 20px rgba(242, 184, 75, 0.3);
   }
 
-  h1 span {
-    color: #f2b84b;
+  .columns {
+    display: flex;
+    gap: clamp(1rem, 2.4vw, 2rem);
+    width: 100%;
+    justify-content: center;
+    align-items: stretch;
+    flex-wrap: wrap;
   }
 
-  .subpoints {
+  .col {
+    flex: 1 1 260px;
+    max-width: 340px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 20px;
+    padding: clamp(1.2rem, 2vw, 1.7rem) clamp(1.1rem, 1.8vw, 1.4rem);
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.8rem;
+    gap: 0.9rem;
+    text-align: center;
   }
 
-  .subpoints .point {
+  .col-icon {
     display: flex;
     align-items: center;
-    gap: 10px;
-    color: #f2b84b;
-    font-size: clamp(1.1rem, 2.6vw, 1.6rem);
-    font-weight: 700;
+    justify-content: center;
+  }
+
+  .col-icon .app-icon {
+    width: clamp(56px, 6vw, 72px);
+    height: clamp(56px, 6vw, 72px);
+    border-radius: 22%;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
+  }
+
+  .col-icon .glyph {
+    width: clamp(56px, 6vw, 72px);
+    height: clamp(56px, 6vw, 72px);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: clamp(1.5rem, 2.6vw, 2rem);
+  }
+
+  .col-title {
+    color: #ffffff;
+    font-size: clamp(1.3rem, 2.4vw, 1.7rem);
+    font-weight: 900;
     letter-spacing: 0.5px;
   }
 
-  .subpoints .point::before {
+  .col-sub {
+    font-size: clamp(0.85rem, 1.5vw, 1rem);
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    margin-top: -0.5rem;
+  }
+
+  .col-points {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+    width: 100%;
+  }
+
+  .col-points .point {
+    position: relative;
+    text-align: left;
+    color: rgba(255, 255, 255, 0.85);
+    font-size: clamp(0.82rem, 1.35vw, 0.98rem);
+    line-height: 1.35;
+    padding-left: 16px;
+  }
+
+  .col-points .point strong {
+    color: #ffffff;
+    white-space: nowrap;
+  }
+
+  .col-points .point::before {
     content: '';
-    width: 8px;
-    height: 8px;
+    position: absolute;
+    left: 0;
+    top: 0.5em;
+    width: 6px;
+    height: 6px;
     border-radius: 50%;
-    background: #f2b84b;
-    box-shadow: 0 0 10px rgba(242, 184, 75, 0.7);
+  }
+
+  /* FEED */
+  .col.feed { border-top: 3px solid #e8844a; }
+  .col.feed .col-sub { color: #e8844a; }
+  .col.feed .col-points .point::before { background: #e8844a; box-shadow: 0 0 8px rgba(232, 132, 74, 0.7); }
+
+  /* READ */
+  .col.read { border-top: 3px solid #f2b84b; }
+  .col.read .col-icon .glyph { background: rgba(242, 184, 75, 0.15); color: #f2b84b; }
+  .col.read .col-sub { color: #f2b84b; }
+  .col.read .col-points .point::before { background: #f2b84b; box-shadow: 0 0 8px rgba(242, 184, 75, 0.7); }
+
+  /* LEAD */
+  .col.lead { border-top: 3px solid #4ea9e8; }
+  .col.lead .col-icon .glyph { background: rgba(78, 169, 232, 0.15); color: #4ea9e8; }
+  .col.lead .col-sub { color: #4ea9e8; }
+  .col.lead .col-points .point::before { background: #4ea9e8; box-shadow: 0 0 8px rgba(78, 169, 232, 0.7); }
+
+  @media (max-width: 900px) {
+    .columns { flex-direction: column; align-items: center; }
+    .col { max-width: 420px; width: 100%; }
   }
 </style>
 </head>
 <body>
 
-<div class="content">
-  <h1>What is <span>Marcella Foundation?</span></h1>
-  <div class="subpoints">
-    <div class="point">Feed, Read, Lead</div>
+<div class="wrap">
+  <img class="logo" src="marcella-logo-light.png" alt="Marcella Foundation">
+  <div class="tagline">Think Big. Make a Difference.</div>
+
+  <div class="columns">
+
+    <div class="col feed">
+      <div class="col-icon"><img class="app-icon" src="feedtahoe-icon.webp" alt="FeedTahoe App icon"></div>
+      <div class="col-title">Feed</div>
+      <div class="col-sub">FeedTahoe App</div>
+      <div class="col-points">
+        <div class="point"><strong>147,000+ lbs</strong> of surplus food rescued for local families</div>
+        <div class="point"><strong>50+</strong> active volunteers</div>
+        <div class="point">Q1 2026 alone: <strong>132</strong> rescues, <strong>11k lbs</strong>, <strong>9,300 meals</strong></div>
+      </div>
+    </div>
+
+    <div class="col read">
+      <div class="col-icon"><div class="glyph">&#128218;</div></div>
+      <div class="col-title">Read</div>
+      <div class="col-sub">Imagination Library &amp; more</div>
+      <div class="col-points">
+        <div class="point"><strong>52,000</strong> books distributed through the Imagination Library</div>
+        <div class="point"><strong>65</strong> Tahoe Valley students in ReadingPals</div>
+        <div class="point"><strong>150+</strong> Kindles donated to Sierra House</div>
+      </div>
+    </div>
+
+    <div class="col lead">
+      <div class="col-icon"><div class="glyph">&#127942;</div></div>
+      <div class="col-title">Lead</div>
+      <div class="col-sub">Scholarships &amp; the Makerspace</div>
+      <div class="col-points">
+        <div class="point">Mobile <strong>Makerspace</strong> deployments at STHS and Tallac</div>
+        <div class="point"><strong>$280,000</strong> in High School Scholarships to over 32 students</div>
+        <div class="point"><strong>100+</strong> college applications through the CAAP Fund</div>
+      </div>
+    </div>
+
   </div>
 </div>
 
