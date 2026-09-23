@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scribble Bots</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    width: 100vw;
+    height: 100vh;
+    background: #1a1b2e;
+    font-family: 'Inter', sans-serif;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  body::before {
+    content: '';
+    position: absolute;
+    width: 900px;
+    height: 900px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(46, 204, 168, 0.16) 0%, transparent 70%);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 0;
+    animation: breathe 6s ease-in-out infinite;
+  }
+
+  @keyframes breathe {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
+    50% { transform: translate(-50%, -50%) scale(1.15); opacity: 1; }
+  }
+
+  figure {
+    position: absolute;
+    z-index: 1;
+    width: 43.7vw;
+    height: 43.7vh;
+    overflow: hidden;
+    border-radius: 14px;
+    margin: 0;
+  }
+
+  figure img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .tl { top: 1.2vh; left: 1.2vw; }
+  .tr { top: 1.2vh; right: 1.2vw; }
+  .bl { bottom: 1.2vh; left: 1.2vw; }
+  .br { bottom: 1.2vh; right: 1.2vw; }
+
+  .video-wrap {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 3;
+    width: clamp(302px, 37vw, 571px);
+    aspect-ratio: 16 / 9;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.55);
+    background: #000;
+  }
+
+  .video-wrap video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+</style>
+</head>
+<body>
+
+<figure class="tl"><img src="photo-1.jpg" alt=""></figure>
+<figure class="tr"><img src="photo-2.jpg" alt=""></figure>
+<figure class="bl"><img src="photo-3.jpg" alt=""></figure>
+<figure class="br"><img src="photo-4.jpg" alt=""></figure>
+
+<div class="video-wrap">
+  <video src="video.mov" autoplay muted loop playsinline></video>
+</div>
+
+</body>
+</html>

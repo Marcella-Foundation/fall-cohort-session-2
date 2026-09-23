@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Is This Legal?</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #14161f;
+    font-family: 'Inter', sans-serif;
+    overflow: hidden;
+    position: relative;
+  }
+
+  body::before {
+    content: '';
+    position: absolute;
+    width: 900px;
+    height: 900px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(120, 130, 255, 0.14) 0%, transparent 70%);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 0;
+    animation: breathe 6s ease-in-out infinite;
+  }
+
+  @keyframes breathe {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
+    50% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+  }
+
+  .wrap {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 1200px;
+    padding: 3vh 4vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: clamp(1.2rem, 2.6vw, 2rem);
+  }
+
+  .eyebrow {
+    color: rgba(255, 255, 255, 0.45);
+    font-size: clamp(0.75rem, 1.3vw, 0.95rem);
+    font-weight: 700;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    text-align: center;
+  }
+
+  h1 {
+    color: #ffffff;
+    font-size: clamp(2rem, 4.6vw, 3.2rem);
+    font-weight: 900;
+    text-align: center;
+    letter-spacing: -1px;
+    margin-top: 4px;
+  }
+
+  .subhead {
+    color: rgba(255, 255, 255, 0.55);
+    font-size: clamp(0.9rem, 1.6vw, 1.1rem);
+    font-weight: 600;
+    text-align: center;
+    max-width: 640px;
+  }
+
+  /* Card */
+  .card {
+    width: 100%;
+    max-width: 920px;
+    min-height: 38vh;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 22px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(1rem, 2.2vw, 1.6rem);
+    padding: clamp(1.6rem, 3.5vw, 3rem);
+    text-align: center;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+  }
+
+  .card.fade {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  .case-num {
+    color: rgba(139, 146, 255, 0.85);
+    font-size: clamp(0.75rem, 1.2vw, 0.9rem);
+    font-weight: 800;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+
+  .case-title {
+    color: #ffffff;
+    font-size: clamp(1.3rem, 2.8vw, 1.9rem);
+    font-weight: 800;
+    letter-spacing: -0.3px;
+    max-width: 760px;
+  }
+
+  .case-scenario {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: clamp(1rem, 2vw, 1.25rem);
+    font-weight: 500;
+    line-height: 1.5;
+    max-width: 720px;
+  }
+
+  /* Key rulings list */
+  .law-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    max-width: 720px;
+    text-align: left;
+  }
+
+  .law-list li {
+    list-style: none;
+    color: rgba(255, 255, 255, 0.78);
+    font-size: clamp(0.85rem, 1.6vw, 1.02rem);
+    line-height: 1.45;
+    padding-left: 1.6em;
+    position: relative;
+  }
+
+  .law-list li::before {
+    content: '\2192';
+    position: absolute;
+    left: 0;
+    color: #8b92ff;
+    font-weight: 700;
+  }
+
+  .law-list li b { color: #fff; }
+  .law-list li .emphasis { color: #cdd0ff; font-weight: 700; }
+
+  .law-list.questions {
+    counter-reset: q;
+  }
+
+  .law-list.questions li {
+    counter-increment: q;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: clamp(0.95rem, 1.8vw, 1.15rem);
+    font-weight: 600;
+  }
+
+  .law-list.questions li::before {
+    content: counter(q) '.';
+    color: #8b92ff;
+    font-weight: 800;
+  }
+
+  /* Kosher / not-kosher columns */
+  .split-cols {
+    display: flex;
+    gap: clamp(1.5rem, 4vw, 3rem);
+    width: 100%;
+    max-width: 780px;
+  }
+
+  .split-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+    text-align: left;
+  }
+
+  .split-col-title {
+    font-size: clamp(0.85rem, 1.5vw, 1rem);
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.2rem;
+  }
+
+  .split-col.kosher .split-col-title { color: #6fd3a4; }
+  .split-col.not .split-col-title { color: #e8697a; }
+
+  .split-col li {
+    list-style: none;
+    color: rgba(255, 255, 255, 0.82);
+    font-size: clamp(0.82rem, 1.5vw, 0.98rem);
+    line-height: 1.4;
+    padding-left: 1.5em;
+    position: relative;
+  }
+
+  .split-col.kosher li::before { content: '\2705'; position: absolute; left: 0; }
+  .split-col.not li::before { content: '\274c'; position: absolute; left: 0; }
+
+  .reveal-btn {
+    background: rgba(139, 146, 255, 0.18);
+    border: 1px solid rgba(139, 146, 255, 0.5);
+    color: #cdd0ff;
+    font-family: 'Inter', sans-serif;
+    font-size: clamp(0.85rem, 1.5vw, 1rem);
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 0.7em 1.6em;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.15s ease;
+  }
+
+  .reveal-btn:hover { background: rgba(139, 146, 255, 0.3); transform: translateY(-2px); }
+
+  /* Verdict banner */
+  .verdict {
+    display: none;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+    max-width: 720px;
+    padding: clamp(1rem, 2vw, 1.4rem);
+    border-radius: 16px;
+    border: 1px solid;
+  }
+
+  .verdict.shown { display: flex; }
+
+  .verdict-label {
+    font-size: clamp(1rem, 2vw, 1.25rem);
+    font-weight: 800;
+    letter-spacing: -0.2px;
+  }
+
+  .verdict-text {
+    color: rgba(255, 255, 255, 0.82);
+    font-size: clamp(0.9rem, 1.7vw, 1.05rem);
+    line-height: 1.5;
+    font-weight: 500;
+    text-align: left;
+  }
+
+  .verdict.legal { background: rgba(111, 211, 164, 0.1); border-color: rgba(111, 211, 164, 0.4); }
+  .verdict.legal .verdict-label { color: #6fd3a4; }
+
+  .verdict.illegal { background: rgba(232, 105, 122, 0.1); border-color: rgba(232, 105, 122, 0.4); }
+  .verdict.illegal .verdict-label { color: #e8697a; }
+
+  .verdict.partial { background: rgba(232, 191, 105, 0.1); border-color: rgba(232, 191, 105, 0.4); }
+  .verdict.partial .verdict-label { color: #e8bf69; }
+
+  /* Outro list */
+  .outro-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+    max-width: 680px;
+    text-align: left;
+  }
+
+  .outro-list li {
+    list-style: none;
+    color: rgba(255, 255, 255, 0.85);
+    font-size: clamp(0.95rem, 1.8vw, 1.15rem);
+    line-height: 1.45;
+    padding-left: 1.6em;
+    position: relative;
+  }
+
+  .outro-list li::before {
+    content: '\2713';
+    position: absolute;
+    left: 0;
+    color: #8b92ff;
+    font-weight: 700;
+  }
+
+  .outro-note {
+    color: rgba(255, 255, 255, 0.4);
+    font-size: clamp(0.75rem, 1.3vw, 0.85rem);
+    font-style: italic;
+  }
+
+  /* Controls */
+  .controls {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .ctrl-btn {
+    background: rgba(139, 146, 255, 0.15);
+    border: 1px solid rgba(139, 146, 255, 0.4);
+    color: #cdd0ff;
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s ease, transform 0.2s ease;
+  }
+
+  .ctrl-btn:hover { background: rgba(139, 146, 255, 0.28); }
+  .ctrl-btn:active { transform: scale(0.96); }
+  .ctrl-btn:disabled { opacity: 0.35; cursor: default; pointer-events: none; }
+
+  .progress-dots {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 7px;
+    max-width: 340px;
+  }
+
+  .p-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.22);
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease;
+  }
+
+  .p-dot.active {
+    background: #8b92ff;
+    transform: scale(1.5);
+  }
+
+  .counter {
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div>
+    <div class="eyebrow" id="eyebrow">Interactive Activity</div>
+    <h1>Is This Legal?</h1>
+  </div>
+  <div class="subhead" id="subhead">AI, copyright, and what you can actually do with what you make</div>
+
+  <div class="card" id="card"></div>
+
+  <div class="controls">
+    <button class="ctrl-btn" id="prevBtn" aria-label="Previous card">&#8592;</button>
+    <div class="progress-dots" id="progressDots"></div>
+    <button class="ctrl-btn" id="nextBtn" aria-label="Next card">&#8594;</button>
+  </div>
+
+  <div class="counter" id="counter"></div>
+</div>
+
+<script>
+  const cases = [
+    {
+      type: 'rulingsQ'
+    },
+    {
+      type: 'rulingsA'
+    },
+    {
+      type: 'cheatsheet'
+    },
+    {
+      num: '01', title: 'The Nike swoosh exercise',
+      scenario: "You prompt an AI to redesign the Nike swoosh with your last name as the brand instead. You print one and pin it to the classroom wall.",
+      verdict: 'legal', label: '✅ Legal',
+      text: "Non-commercial design exercise, no one is confused about the source. Trademark law is about consumer confusion in commerce."
+    },
+    {
+      num: '02', title: 'Same swoosh, 40 t-shirts',
+      scenario: 'Same design. You print it on 40 t-shirts and sell them at the school fundraiser for $15 each.',
+      verdict: 'illegal', label: '❌ Not legal',
+      text: "Now it's in commerce and trades on Nike's brand. Trademark infringement + dilution. The design didn't change — the use did."
+    },
+    {
+      num: '03', title: 'Pikachu keychain',
+      scenario: 'You laser-cut 20 Pikachu acrylic keychains and sell them at a craft fair.',
+      verdict: 'illegal', label: '❌ Not legal',
+      text: '"I drew it myself" and "AI drew it" are equally not a defense.'
+    },
+    {
+      num: '04', title: 'The politician cartoon',
+      scenario: 'You generate an exaggerated cartoon of a sitting senator and post it on Instagram with a caption criticizing a vote.',
+      verdict: 'legal', label: '✅ Legal',
+      text: 'Parody/commentary on a public figure is core protected speech. Very strong protection in the US.'
+    },
+    {
+      num: '05', title: "Same cartoon, but it's a lie",
+      scenario: 'Same senator, but the image depicts them doing something they never did, posted as if it were real.',
+      verdict: 'illegal', label: '❌ Not legal (potentially)',
+      text: 'Defamation — a false statement of fact presented as real that damages reputation. Obvious satire is protected; realistic fabrication is not.'
+    },
+    {
+      num: '06', title: "Your classmate's face",
+      scenario: 'You generate a poster using a photorealistic likeness of a classmate and sell prints of it.',
+      verdict: 'illegal', label: '❌ Not legal',
+      text: "Right of publicity — commercial use of someone's likeness needs permission. (Rules vary by state; California is strict.)"
+    },
+    {
+      num: '07', title: '"I own this"',
+      scenario: 'You prompt Midjourney 200 times, pick the best image, and register it with the US Copyright Office.',
+      verdict: 'illegal', label: '❌ Rejected',
+      text: "Thaler v. Perlmutter (D.C. Cir. 2025) — an AI can't be an author, and pure AI output gets no copyright. Prompting alone isn't authorship, no matter how many tries."
+    },
+    {
+      num: '08', title: 'Zarya of the Dawn',
+      scenario: 'You write a comic: your story, your panel layout, AI-generated art. You register it.',
+      verdict: 'partial', label: '⚖️ Partly',
+      text: 'This actually happened. The Copyright Office granted protection on the text and the arrangement, but not the individual AI images. Your human contribution is what you own.'
+    },
+    {
+      num: '09', title: 'The heavy edit',
+      scenario: 'You generate a base image, then spend four hours redrawing it in Illustrator — retracing paths, redoing the color, changing the composition.',
+      verdict: 'partial', label: '⚖️ Probably yes, for your part',
+      text: "Human-authored modifications are protectable. There's no bright line for \"how much is enough\" — this is genuinely unsettled and you should disclose AI use when registering."
+    },
+    {
+      num: '10', title: 'Training on the internet',
+      scenario: 'An AI company trains its model on millions of copyrighted books scraped from the web.',
+      verdict: 'partial', label: '⚖️ Leaning fair use — but it’s complicated',
+      text: 'In 2025 Bartz v. Anthropic and Kadrey v. Meta both leaned toward training being fair use. But Anthropic paid roughly $1.5B to settle claims over pirated copies. Training may be fine; how you got the books is a separate question.'
+    },
+    {
+      num: '11', title: 'Disney v. Midjourney',
+      scenario: 'A generator reliably produces near-perfect images of famous studio characters on request.',
+      verdict: 'partial', label: '⚖️ Undecided',
+      text: "Filed 2025, still pending. This case is about outputs, not training. This is the one that decides most of your questions, and it hasn't been decided."
+    },
+    {
+      num: '12', title: 'The Atrium question',
+      scenario: 'You bring an AI-generated design to the Atrium and ask to laser-cut it for a personal project.',
+      verdict: 'partial', label: '⚖️ That’s our call to make',
+      text: 'No slide answer — this is the transition into the ethics activity.'
+    },
+    {
+      type: 'outro'
+    }
+  ];
+
+  const cardEl = document.getElementById('card');
+  const dotsEl = document.getElementById('progressDots');
+  const counterEl = document.getElementById('counter');
+  const eyebrowEl = document.getElementById('eyebrow');
+  const subheadEl = document.getElementById('subhead');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  let index = 0;
+
+  cases.forEach((_, i) => {
+    const dot = document.createElement('div');
+    dot.className = 'p-dot' + (i === 0 ? ' active' : '');
+    dot.addEventListener('click', () => goTo(i));
+    dotsEl.appendChild(dot);
+  });
+  const dots = document.querySelectorAll('.p-dot');
+
+  function buildRulingsQ() {
+    eyebrowEl.textContent = 'Interactive Activity';
+    subheadEl.textContent = 'Four questions worth knowing the answer to';
+    const el = document.createElement('div');
+    el.innerHTML = `
+      <div class="case-title" style="margin-bottom: 0.4rem;">Can You...?</div>
+      <ul class="law-list questions">
+        <li>Own copyright on pure AI output &mdash; an image you generated but never touched?</li>
+        <li>Get copyright by prompting really well, over and over, until it's perfect?</li>
+        <li>Train an AI model on copyrighted books you scraped off the internet?</li>
+        <li>Legally generate images of Disney or Marvel characters on request?</li>
+      </ul>
+    `;
+    return el;
+  }
+
+  function buildRulingsA() {
+    eyebrowEl.textContent = 'Interactive Activity';
+    subheadEl.textContent = 'Four rulings worth knowing';
+    const el = document.createElement('div');
+    el.innerHTML = `
+      <div class="case-title" style="margin-bottom: 0.4rem;">Key Rulings</div>
+      <ul class="law-list">
+        <li><b>Thaler v. Perlmutter</b> (2025, SCOTUS declined 2026) &mdash; AI can't be an author. Pure AI output = no copyright.</li>
+        <li><b>Zarya of the Dawn</b> &mdash; she got copyright on her <span class="emphasis">text and arrangement</span>, not the AI images. Prompting isn't authorship.</li>
+        <li><b>Bartz v. Anthropic / Kadrey v. Meta</b> (2025) &mdash; training on copyrighted work leaned fair use. But Anthropic paid ~$1.5B over <span class="emphasis">pirated</span> copies.</li>
+        <li><b>Disney &amp; Universal v. Midjourney</b> (filed 2025, still pending) &mdash; about outputs of famous characters. <span class="emphasis">This one decides your question, and it hasn't been decided.</span></li>
+      </ul>
+    `;
+    return el;
+  }
+
+  function buildCheatsheet() {
+    eyebrowEl.textContent = 'Before We Start';
+    subheadEl.textContent = 'What that means in practice';
+    const el = document.createElement('div');
+    el.innerHTML = `
+      <div class="case-title" style="margin-bottom: 0.4rem;">Quick Reference</div>
+      <div class="split-cols">
+        <div class="split-col kosher">
+          <div class="split-col-title">Definitely Kosher</div>
+          <ul>
+            <li>Generating almost anything &mdash; selling it is where it gets risky.</li>
+            <li>Cartooning a public figure.</li>
+            <li>A fake Nike swoosh with your name on it, as a design exercise.</li>
+            <li>Posting your class work publicly. Public &ne; commercial.</li>
+          </ul>
+        </div>
+        <div class="split-col not">
+          <div class="split-col-title">Definitely Not</div>
+          <ul>
+            <li>Selling merch with Pikachu or the Nike swoosh on it.</li>
+            <li>Using someone's likeness without permission, while selling.</li>
+            <li>Defamatory images of a real person.</li>
+            <li>Claiming copyright on raw AI output.</li>
+          </ul>
+        </div>
+      </div>
+    `;
+    return el;
+  }
+
+  function buildOutro() {
+    eyebrowEl.textContent = 'Wrap-up';
+    subheadEl.textContent = 'What actually transfers';
+    const el = document.createElement('div');
+    el.innerHTML = `
+      <ul class="outro-list">
+        <li>The law cares about use, not tools.</li>
+        <li>Commerce is the tripwire: generate freely, sell carefully.</li>
+        <li>You own your human contribution — your arrangement, your edits, your text.</li>
+        <li>The biggest questions (character outputs, how much editing is "enough") are live and unresolved. You're going to graduate into this.</li>
+      </ul>
+      <div class="outro-note">Not legal advice. Laws vary by country, and 2026 is early.</div>
+    `;
+    return el;
+  }
+
+  function buildCase(c) {
+    eyebrowEl.textContent = 'Case ' + c.num;
+    subheadEl.textContent = 'What’s the ruling?';
+    const el = document.createElement('div');
+
+    const num = document.createElement('div');
+    num.className = 'case-num';
+    num.textContent = 'Case ' + c.num;
+
+    const title = document.createElement('div');
+    title.className = 'case-title';
+    title.textContent = c.title;
+
+    const scenario = document.createElement('div');
+    scenario.className = 'case-scenario';
+    scenario.textContent = c.scenario;
+
+    el.appendChild(num);
+    el.appendChild(title);
+    el.appendChild(scenario);
+
+    const revealBtn = document.createElement('button');
+    revealBtn.className = 'reveal-btn';
+    revealBtn.textContent = 'Reveal Ruling';
+
+    const verdict = document.createElement('div');
+    verdict.className = 'verdict ' + c.verdict;
+
+    const vLabel = document.createElement('div');
+    vLabel.className = 'verdict-label';
+    vLabel.textContent = c.label;
+
+    const vText = document.createElement('div');
+    vText.className = 'verdict-text';
+    vText.textContent = c.text;
+
+    verdict.appendChild(vLabel);
+    verdict.appendChild(vText);
+
+    revealBtn.addEventListener('click', () => {
+      verdict.classList.add('shown');
+      revealBtn.style.display = 'none';
+    });
+
+    el.appendChild(revealBtn);
+    el.appendChild(verdict);
+
+    return el;
+  }
+
+  function render() {
+    const c = cases[index];
+    cardEl.innerHTML = '';
+    let content;
+    if (c.type === 'rulingsQ') content = buildRulingsQ();
+    else if (c.type === 'rulingsA') content = buildRulingsA();
+    else if (c.type === 'cheatsheet') content = buildCheatsheet();
+    else if (c.type === 'outro') content = buildOutro();
+    else content = buildCase(c);
+    cardEl.appendChild(content);
+
+    dots.forEach((d, i) => d.classList.toggle('active', i === index));
+    counterEl.textContent = (index + 1) + ' / ' + cases.length;
+    prevBtn.disabled = index === 0;
+    nextBtn.disabled = index === cases.length - 1;
+  }
+
+  function goTo(i) {
+    if (i < 0 || i >= cases.length || i === index) return;
+    cardEl.classList.add('fade');
+    setTimeout(() => {
+      index = i;
+      render();
+      cardEl.classList.remove('fade');
+    }, 200);
+  }
+
+  prevBtn.addEventListener('click', () => goTo(index - 1));
+  nextBtn.addEventListener('click', () => goTo(index + 1));
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight') goTo(index + 1);
+    if (e.key === 'ArrowLeft') goTo(index - 1);
+  });
+
+  render();
+</script>
+
+</body>
+</html>

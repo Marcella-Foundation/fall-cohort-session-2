@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bitmap vs Vector</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    width: 100vw;
+    height: 100vh;
+    background: #1a1b2e;
+    font-family: 'Inter', sans-serif;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  body::before {
+    content: '';
+    position: absolute;
+    width: 900px;
+    height: 900px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(46, 204, 168, 0.16) 0%, transparent 70%);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 0;
+    animation: breathe 6s ease-in-out infinite;
+  }
+
+  @keyframes breathe {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
+    50% { transform: translate(-50%, -50%) scale(1.15); opacity: 1; }
+  }
+
+  .wrap {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: clamp(2rem, 4vh, 3.2rem);
+  }
+
+  h1 {
+    color: #ffffff;
+    font-size: clamp(2.2rem, 5.2vw, 4rem);
+    font-weight: 900;
+    letter-spacing: -1px;
+    text-align: center;
+  }
+
+  h1 span { color: #2ecca8; }
+
+  .panels {
+    display: flex;
+    gap: clamp(1.4rem, 3vw, 2.6rem);
+  }
+
+  .panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.9rem;
+  }
+
+  .tag {
+    font-size: clamp(0.7rem, 1vw, 0.85rem);
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.5);
+  }
+
+  .bitmap .tag { color: #ff8a5c; }
+  .vector .tag { color: #2ecca8; }
+
+  .stage {
+    position: relative;
+    width: clamp(220px, 26vw, 320px);
+    height: clamp(220px, 26vw, 320px);
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    cursor: crosshair;
+  }
+
+  .bitmap .stage { border-color: rgba(255, 138, 92, 0.35); }
+  .vector .stage { border-color: rgba(46, 204, 168, 0.35); }
+
+  .art {
+    width: 62%;
+    height: 62%;
+    display: block;
+  }
+
+  img.art {
+    image-rendering: pixelated;
+    filter: invert(1) brightness(1.6);
+  }
+
+  svg.art {
+    overflow: visible;
+    fill: none;
+    stroke: #2ecca8;
+    stroke-width: 5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .loupe {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #14151f;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.12s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .bitmap .loupe { border-color: #ff8a5c; }
+  .vector .loupe { border-color: #2ecca8; }
+
+  .stage.on .loupe { opacity: 1; }
+
+  .loupe .art {
+    position: absolute;
+    width: 62%;
+    height: 62%;
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <h1>Bitmap <span>vs</span> Vector</h1>
+
+  <div class="panels">
+    <div class="panel bitmap">
+      <div class="tag">Bitmap</div>
+      <div class="stage" id="stageB">
+        <img class="art" src="viking-64.png" alt="Viking helmet, pixel bitmap" draggable="false">
+        <div class="loupe">
+          <img class="art" src="viking-64.png" alt="" draggable="false" style="transform: scale(6);">
+        </div>
+      </div>
+    </div>
+
+    <div class="panel vector">
+      <div class="tag">Vector</div>
+      <div class="stage" id="stageV">
+        <svg class="art" viewBox="0 0 100 100" aria-label="Viking helmet, vector">
+          <path d="M22 62 Q22 30 50 26 Q78 30 78 62 Z"/><path d="M22 62 L78 62"/><path d="M50 26 L50 62"/>
+          <path d="M22 52 C6 48 6 26 14 18 C14 34 20 42 30 46"/><path d="M78 52 C94 48 94 26 86 18 C86 34 80 42 70 46"/>
+          <path d="M36 62 L36 80 L44 84"/><path d="M64 62 L64 80 L56 84"/>
+          <circle cx="50" cy="46" r="4" fill="#2ecca8" stroke="none"/>
+        </svg>
+        <div class="loupe">
+          <svg class="art" viewBox="0 0 100 100" aria-hidden="true" style="transform: scale(6);">
+            <path d="M22 62 Q22 30 50 26 Q78 30 78 62 Z"/><path d="M22 62 L78 62"/><path d="M50 26 L50 62"/>
+            <path d="M22 52 C6 48 6 26 14 18 C14 34 20 42 30 46"/><path d="M78 52 C94 48 94 26 86 18 C86 34 80 42 70 46"/>
+            <path d="M36 62 L36 80 L44 84"/><path d="M64 62 L64 80 L56 84"/>
+            <circle cx="50" cy="46" r="4" fill="#2ecca8" stroke="none"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('.stage').forEach(stage => {
+    const loupe = stage.querySelector('.loupe');
+    const copy = loupe.querySelector('.art');
+    function move(e) {
+      const r = stage.getBoundingClientRect();
+      const px = e.clientX - r.left, py = e.clientY - r.top;
+      loupe.style.left = px + 'px';
+      loupe.style.top = py + 'px';
+      const dx = (px - r.width / 2) * -6;
+      const dy = (py - r.height / 2) * -6;
+      copy.style.transform = `translate(${dx}px, ${dy}px) scale(6)`;
+      stage.classList.add('on');
+    }
+    stage.addEventListener('pointerenter', move);
+    stage.addEventListener('pointermove', move);
+    stage.addEventListener('pointerleave', () => stage.classList.remove('on'));
+  });
+</script>
+
+</body>
+</html>

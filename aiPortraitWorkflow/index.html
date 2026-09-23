@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Portrait Workflow</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=Roboto+Mono:wght@500&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #1a1b2e;
+    font-family: 'Inter', sans-serif;
+    overflow: hidden;
+    position: relative;
+  }
+
+  body::before {
+    content: '';
+    position: absolute;
+    width: 900px;
+    height: 900px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(139, 92, 246, 0.18) 0%, transparent 70%);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 0;
+    animation: breathe 6s ease-in-out infinite;
+  }
+
+  @keyframes breathe {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
+    50% { transform: translate(-50%, -50%) scale(1.15); opacity: 1; }
+  }
+
+  .layout {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 980px;
+    padding: 4vh 4vw;
+    animation: fadeInUp 0.9s ease-out;
+  }
+
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .eyebrow {
+    color: rgba(255, 255, 255, 0.55);
+    font-size: clamp(0.8rem, 1.4vw, 0.95rem);
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    text-align: center;
+    margin-bottom: 0.6rem;
+  }
+
+  h1 {
+    color: #ffffff;
+    font-size: clamp(2rem, 4.6vw, 3.1rem);
+    font-weight: 900;
+    letter-spacing: -1px;
+    line-height: 1.1;
+    text-align: center;
+    text-shadow: 0 2px 20px rgba(139, 92, 246, 0.35);
+    margin-bottom: 3.2vh;
+  }
+
+  h1 span { color: #a78bfa; }
+
+  .steps {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 1.4rem;
+  }
+
+  .step {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .num {
+    flex: 0 0 auto;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #a78bfa;
+    color: #1a1230;
+    font-weight: 900;
+    font-size: 1.05rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 18px rgba(167, 139, 250, 0.45);
+  }
+
+  .step-body {
+    flex: 1;
+    padding-top: 0.3rem;
+  }
+
+  .step-body p {
+    color: #ffffff;
+    font-size: clamp(1.05rem, 2vw, 1.35rem);
+    line-height: 1.45;
+    font-weight: 600;
+  }
+
+  .step-body code {
+    font-family: 'Roboto Mono', monospace;
+    font-weight: 500;
+    font-size: 0.88em;
+    color: #d9c9ff;
+    background: rgba(167, 139, 250, 0.14);
+    padding: 0.12em 0.5em;
+    border-radius: 6px;
+  }
+
+  .substeps {
+    list-style: none;
+    margin-top: 0.7rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding-left: 1.4rem;
+    border-left: 2px solid rgba(167, 139, 250, 0.25);
+  }
+
+  .substeps li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    color: rgba(255, 255, 255, 0.75);
+    font-size: clamp(0.85rem, 1.5vw, 1.02rem);
+    line-height: 1.4;
+    font-weight: 400;
+  }
+
+  .letter {
+    flex: 0 0 auto;
+    width: 20px;
+    height: 20px;
+    border-radius: 6px;
+    background: rgba(167, 139, 250, 0.18);
+    color: #c9b8ff;
+    font-weight: 700;
+    font-size: 0.72rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 0.1em;
+  }
+
+  @media (max-width: 700px) {
+    .layout { padding: 3vh 6vw; }
+  }
+</style>
+</head>
+<body>
+
+<div class="layout">
+  <h1><span>Trading Card</span> Design Workflow</h1>
+
+  <ol class="steps">
+    <li class="step">
+      <span class="num">1</span>
+      <div class="step-body">
+        <p>Go to <code>eyra.atriumtahoe.org/classroom</code> — the LLM chat</p>
+      </div>
+    </li>
+    <li class="step">
+      <span class="num">2</span>
+      <div class="step-body">
+        <p>Go to <code>tinyurl.com/cohort-2-upload</code> — download your prompt &amp; template image, send the prompt, and download the outputs</p>
+      </div>
+    </li>
+    <li class="step">
+      <span class="num">3</span>
+      <div class="step-body">
+        <p>In Photopea — Frankenstein together your final creation</p>
+        <ul class="substeps">
+          <li><span class="letter">A</span> Combine the elements you like</li>
+          <li><span class="letter">B</span> Rewrite any text as needed</li>
+          <li><span class="letter">C</span> Use the histogram to check color spectrum — fix with Threshold</li>
+          <li><span class="letter">D</span> Save as PNG</li>
+        </ul>
+      </div>
+    </li>
+    <li class="step">
+      <span class="num">4</span>
+      <div class="step-body">
+        <p>Submit your final PNG back to Google Drive</p>
+      </div>
+    </li>
+  </ol>
+</div>
+
+</body>
+</html>

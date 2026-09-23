@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Where Do You Stand?</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #14161f;
+    font-family: 'Inter', sans-serif;
+    overflow: hidden;
+    position: relative;
+  }
+
+  body::before {
+    content: '';
+    position: absolute;
+    width: 900px;
+    height: 900px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(120, 130, 255, 0.14) 0%, transparent 70%);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 0;
+    animation: breathe 6s ease-in-out infinite;
+  }
+
+  @keyframes breathe {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
+    50% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+  }
+
+  .wrap {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 1200px;
+    padding: 3vh 4vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: clamp(2rem, 4vw, 3.2rem);
+  }
+
+  .eyebrow {
+    color: rgba(255, 255, 255, 0.45);
+    font-size: clamp(0.75rem, 1.3vw, 0.95rem);
+    font-weight: 700;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    text-align: center;
+  }
+
+  h1 {
+    color: #ffffff;
+    font-size: clamp(2.2rem, 5vw, 3.6rem);
+    font-weight: 900;
+    text-align: center;
+    letter-spacing: -1px;
+    margin-top: 4px;
+  }
+
+  /* Scale bar */
+  .scale {
+    width: 100%;
+    max-width: 760px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .scale-track {
+    position: relative;
+    width: 100%;
+    height: 10px;
+    border-radius: 10px;
+    background: linear-gradient(90deg, #6fd3a4 0%, #4c5266 50%, #e8697a 100%);
+  }
+
+  .scale-labels {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    font-size: clamp(0.8rem, 1.5vw, 1rem);
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.85);
+  }
+
+  .scale-labels .agree { color: #6fd3a4; }
+  .scale-labels .neutral { color: rgba(255, 255, 255, 0.55); font-weight: 600; }
+  .scale-labels .disagree { color: #e8697a; text-align: right; }
+
+  .scale-sub {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    font-size: clamp(0.7rem, 1.1vw, 0.82rem);
+    color: rgba(255, 255, 255, 0.4);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  /* Statement card */
+  .card {
+    width: 100%;
+    max-width: 900px;
+    min-height: 22vh;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(1.6rem, 3.5vw, 3rem);
+    text-align: center;
+  }
+
+  .statement {
+    color: #ffffff;
+    font-size: clamp(1.4rem, 3.2vw, 2.3rem);
+    font-weight: 700;
+    line-height: 1.35;
+    letter-spacing: -0.3px;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+  }
+
+  .statement.fade {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  .statement::before,
+  .statement::after {
+    content: '\201C';
+    color: rgba(255, 255, 255, 0.3);
+  }
+  .statement::after {
+    content: '\201D';
+  }
+
+  /* Question controls — deliberately distinct from the deck's own slide-nav pill */
+  .controls {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .ctrl-btn {
+    background: rgba(139, 146, 255, 0.15);
+    border: 1px solid rgba(139, 146, 255, 0.4);
+    color: #cdd0ff;
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s ease, transform 0.2s ease;
+  }
+
+  .ctrl-btn:hover { background: rgba(139, 146, 255, 0.28); }
+  .ctrl-btn:active { transform: scale(0.96); }
+  .ctrl-btn:disabled { opacity: 0.35; cursor: default; pointer-events: none; }
+
+  .progress-dots {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 7px;
+    max-width: 260px;
+  }
+
+  .p-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.22);
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease;
+  }
+
+  .p-dot.active {
+    background: #8b92ff;
+    transform: scale(1.5);
+  }
+
+  .counter {
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div>
+    <div class="eyebrow">Move Around the Room</div>
+    <h1>Where Do You Stand?</h1>
+  </div>
+
+  <div class="scale">
+    <div class="scale-labels">
+      <span class="agree">Strongly Agree</span>
+      <span class="neutral">Neutral</span>
+      <span class="disagree">Strongly Disagree</span>
+    </div>
+    <div class="scale-track"></div>
+    <div class="scale-sub">
+      <span>&#8592; Front of Room</span>
+      <span>Back of Room &#8594;</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="statement" id="statement">&#8220;&#8221;</div>
+  </div>
+
+  <div class="controls">
+    <button class="ctrl-btn" id="prevBtn" aria-label="Previous statement">&#8592;</button>
+    <div class="progress-dots" id="progressDots"></div>
+    <button class="ctrl-btn" id="nextBtn" aria-label="Next statement">&#8594;</button>
+  </div>
+
+  <div class="counter" id="counter"></div>
+</div>
+
+<script>
+  const statements = [
+    "If you prompted it, you made it.",
+    "In 20 years, ‘made by a human’ will be a luxury label — like handmade furniture.",
+    "The people building AI should be the ones who decide the rules on how it can be used.",
+    "Any country that regulates AI heavily will lose to one that doesn’t, so regulating it is pointless.",
+    "Some technologies are forbidden, and should never be built, even if we know how.",
+    "The Atrium should allow AI-generated designs for laser cutting, t-shirt printing, etc."
+  ];
+
+  const statementEl = document.getElementById('statement');
+  const dotsEl = document.getElementById('progressDots');
+  const counterEl = document.getElementById('counter');
+  let index = 0;
+
+  statements.forEach((_, i) => {
+    const dot = document.createElement('div');
+    dot.className = 'p-dot' + (i === 0 ? ' active' : '');
+    dot.addEventListener('click', () => goTo(i));
+    dotsEl.appendChild(dot);
+  });
+  const dots = document.querySelectorAll('.p-dot');
+
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+
+  function render() {
+    statementEl.textContent = statements[index];
+    dots.forEach((d, i) => d.classList.toggle('active', i === index));
+    counterEl.textContent = (index + 1) + ' / ' + statements.length;
+    prevBtn.disabled = index === 0;
+    nextBtn.disabled = index === statements.length - 1;
+  }
+
+  function goTo(i) {
+    if (i < 0 || i >= statements.length || i === index) return;
+    statementEl.classList.add('fade');
+    setTimeout(() => {
+      index = i;
+      render();
+      statementEl.classList.remove('fade');
+    }, 200);
+  }
+
+  prevBtn.addEventListener('click', () => goTo(index - 1));
+  nextBtn.addEventListener('click', () => goTo(index + 1));
+
+  render();
+</script>
+
+</body>
+</html>
